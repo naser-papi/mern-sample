@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "types": [
+      "cypress"
+    ],
+    "lib": [
+      "dom",
+      "es2021",
+      "scripthost"
+    ],
+    "moduleResolution": "node",
+    "allowJs": true,
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "preserveSymlinks": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "useUnknownInCatchVariables": false
+  },
+  "include": [
+    "**/*.ts"
+  ]
+}
