@@ -42,9 +42,15 @@ export const updateInfo = async (
   const { id } = req.params;
   const { email, password } = req.body;
   if (!email || !password) next(new Error("invalid data for update"));
-  const post = (await Info.findById(id)) as IDoc<IInfoSchema>;
-  if (!post) next(new Error("invalid post id"));
+  const info = (await Info.findById(id)) as IDoc<IInfoSchema>;
+  if (!info) next(new Error("invalid post id"));
 
+  const exist = (await Info.find({ email: email })) as IDoc<IInfoSchema>[];
+  if (exist && exist.length) {
+    //exist
+    next(new Error("this email is exist!!!"));
+    return;
+  }
   const updatedInfo = await Info.findByIdAndUpdate(id, { email, password }, { new: true });
 
   return res.status(200).json(updatedInfo);
