@@ -1,50 +1,44 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { setList, setIsBusy, addToList } from "./state/infoSlice";
-
+import { setList, addToList, updateItem } from "./state/infoSlice";
+import { IInfo, IAppState } from "./models/General";
+import useCallApi from "./hooks/useCallApi";
+import InfoList from "./InfoList";
 import "./App.css";
-import { IAppInfo, IAppState } from "./models/General";
-
-const appInitInfo: IAppInfo = {
+const appInitInfo: IInfo = {
   email: "",
   password: "",
-  new: true
+  new: true,
+  id: ""
 };
 function App() {
   const dispatch = useDispatch();
-  const { infoList, isBusy } = useSelector((state: IAppState) => state.info);
-  const [info, setInfo] = useState<IAppInfo>({ ...appInitInfo });
+  const { info: infoState, general } = useSelector((state: IAppState) => state);
+  const { infoList } = infoState;
+  const { isBusy } = general;
+  const [info, setInfo] = useState<IInfo>({ ...appInitInfo });
+  const [callApi] = useCallApi();
   useEffect(() => {
     //read list form backend
-    dispatch(setIsBusy(true));
-    axios
-      .get("http://localhost:8082/api/info")
-      .then((resp) => {
-        dispatch(setList(resp.data));
-      })
-      .catch((err) => {
-        console.error("ERR while read list: ", err);
-      })
-      .finally(() => {
-        dispatch(setIsBusy(false));
-      });
+    callApi({
+      url: "info",
+      method: "GET",
+      successHandler: (list) => {
+        dispatch(setList(list));
+      }
+    });
   }, []);
 
-  //TODO:: need better solution
-  //after any add or update isBusy will change and rerender will occurs for all list
-  const list = isBusy ? (
-    <p>loading....</p>
-  ) : infoList.length == 0 ? (
-    <p>List is Empty</p>
-  ) : (
-    infoList.map((item) => (
-      <li key={item.email}>
-        <strong>{item.email}</strong>
-        <span>{item.password}</span>
-      </li>
-    ))
-  );
+  const handleInfoClick = (id: string) => {
+    const item = infoList.find((item) => item.id === id);
+    if (item) {
+      setInfo({
+        ...item,
+        new: false
+      });
+    }
+  };
+
   const onChangeHandler = (event) => {
     setInfo({
       ...info,
@@ -54,30 +48,39 @@ function App() {
   const submitHandler = (event) => {
     event.preventDefault();
     if (isBusy) {
-      alert("wait...");
+      alert("wait.....");
       return;
     }
-    dispatch(setIsBusy(true));
-    axios
-      .post("http://localhost:8082/api/info", {
-        email: info.email,
-        password: info.password
-      })
-      .then((resp) => {
-        //resp.data will have id too
-        dispatch(addToList(resp.data));
-        setInfo({ ...appInitInfo });
-        dispatch(setIsBusy(false));
-      })
-      .catch((err) => {
-        console.error("ERR while add new item", err);
-      })
-      .finally(() => {
-        dispatch(setIsBusy(false));
+    if (info.new) {
+      callApi({
+        url: "info",
+        method: "POST",
+        getBody: () => ({
+          email: info.email,
+          password: info.password
+        }),
+        successHandler: (item) => {
+          dispatch(addToList(item));
+          setInfo({ ...appInitInfo });
+        }
       });
+    } else {
+      callApi({
+        url: `info/${info.id}`,
+        method: "PUT",
+        getBody: () => ({
+          email: info.email,
+          password: info.password
+        }),
+        successHandler: (item) => {
+          dispatch(updateItem(item));
+          setInfo({ ...item, new: false });
+        }
+      });
+    }
   };
   return (
-    <div>
+    <div className={"infoManagement"}>
       <form onSubmit={submitHandler}>
         <input
           type={"email"}
@@ -95,9 +98,7 @@ function App() {
         />
         <button type={"submit"}>{info.new ? "Add" : "Update"}</button>
       </form>
-      <div>
-        <ul>{list}</ul>
-      </div>
+      <InfoList list={infoList} current={info} handleInfoClick={handleInfoClick} />
     </div>
   );
 }

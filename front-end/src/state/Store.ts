@@ -1,8 +1,8 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-
 import infoSlice from "./InfoSlice";
+import generalSlice from "./GeneralSlice";
 
-const reducers = combineReducers({ info: infoSlice });
+const reducers = combineReducers({ info: infoSlice,general:generalSlice });
 
 
 const store = configureStore({

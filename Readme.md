@@ -11,10 +11,11 @@ In the first version we just have simple view that shows us the list of emails a
 - ~~Selecting Items from list and update just password field~~
 - ~~add some simple stiles to front~~
 - ~~update feature for front~~
-- Review and refactor frontend code
-- Review and refactor backend code
+- ~~BUG: after update the item in the list don't updated.~~
+- ~~Review and refactor frontend code~~
+- ~~Review and refactor backend code~~
+- ~~Create custom hook for calling APIs according to a specific config~~
 - Adding material ui and using its style and UI elements for app
-- Create custom hook for calling APIs according to a specific config
 - Display Errors in Snackbars or toasts
 - Review and refactor Front-end code.
 

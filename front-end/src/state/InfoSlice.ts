@@ -2,8 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { IInfoState } from "../models/General";
 
 const initialState: IInfoState = {
-  infoList: [],
-  isBusy: false
+  infoList: []
 };
 
 const InfoSlice = createSlice<IInfoState>({
@@ -13,8 +12,15 @@ const InfoSlice = createSlice<IInfoState>({
     setList: (state: IInfoState, action) => {
       state.infoList = action.payload;
     },
-    setIsBusy: (state: IInfoState, action) => {
-      state.isBusy = action.payload;
+    updateItem: (state: IInfoState, action) => {
+      let exist = state.infoList.find((item) => item.id == action.payload.id);
+      if (exist) {
+        exist = { ...action.payload };
+        state.infoList = [
+          ...state.infoList.filter((item) => item.id !== action.payload.id),
+          { ...exist }
+        ];
+      }
     },
     addToList: (state: IInfoState, action) => {
       state.infoList.push(action.payload);
@@ -22,6 +28,6 @@ const InfoSlice = createSlice<IInfoState>({
   }
 });
 
-export const { setList, setIsBusy,addToList } = InfoSlice.actions;
+export const { setList, addToList, updateItem } = InfoSlice.actions;
 
 export default InfoSlice.reducer;
