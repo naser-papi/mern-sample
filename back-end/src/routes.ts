@@ -1,5 +1,8 @@
 import express from "express";
-import { addInfo,getInfo } from "./controllers/Info";
+import { addInfo, getInfoList, updateInfo } from "./controllers/Info";
+
+const withErrorHandler = (fn) => (req, res, next) =>
+  Promise.resolve(fn(req, res, next)).catch(next);
 
 const apiRouter = express.Router();
 
@@ -8,9 +11,8 @@ apiRouter.get("/", (req, res) => {
 });
 
 /*Auth Routes*/
-apiRouter.post("/info", addInfo);
-//apiRouter.put("/info/update", updateInfo);
-apiRouter.get("/info", getInfo);
-
+apiRouter.post("/info", withErrorHandler(addInfo));
+apiRouter.put("/info/:id", withErrorHandler(updateInfo));
+apiRouter.get("/info/", withErrorHandler(getInfoList));
 
 export default apiRouter;

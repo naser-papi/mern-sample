@@ -5,7 +5,7 @@ import cors from "cors";
 import helmet from "helmet";
 import path from "path";
 import apiRouter from "./routes";
-import {IError} from "./models/GlobalTypes";
+import { IError } from "./models/GlobalTypes";
 
 /* Configuration */
 const server = express();
@@ -24,7 +24,7 @@ server.get("/", (req, res) => {
 server.use("/api", apiRouter);
 
 server.use(
-  (err:IError, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  (err: IError, req: express.Request, res: express.Response, next: express.NextFunction) => {
     if (err) {
       res.status(400).json({ error: err.message });
     }
@@ -38,7 +38,7 @@ mongoose
   .then(() => {
     server.listen(Number(process.env.PORT), process.env.SERVER, () => {
       console.log(
-        `Server is runing on this address: http://${process.env.SERVER}:${process.env.PORT}`
+        `Server is running on this address: http://${process.env.SERVER}:${process.env.PORT}`
       );
     });
   })
