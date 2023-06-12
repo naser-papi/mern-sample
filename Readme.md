@@ -1,4 +1,4 @@
-# ToBTC app
+# Mern-Sample app
 
 In the first version we just have simple view that shows us the list of emails and a form for adding new email and passwords to the list.
 
